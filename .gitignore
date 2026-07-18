@@ -1,0 +1,8 @@
+.idea/
+target/
+*.iml
+*.log
+*.class
+
+service-registry.zip
+IntelliJ IDEA 2026.2/
