@@ -14,9 +14,12 @@ public class RecommendationController {
             LoggerFactory.getLogger(RecommendationController.class);
 
     @GetMapping("/recommendations")
-    public List<String> getRecommendations() {
+    public List<String> getRecommendations() throws InterruptedException {
 
         log.info("========== Recommendation Service Called ==========");
+
+        // Simulate a slow backend service
+        Thread.sleep(10000);   // 10 seconds
 
         return List.of(
                 "Wireless Mouse",
