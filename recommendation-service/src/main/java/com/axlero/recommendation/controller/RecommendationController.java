@@ -65,4 +65,12 @@ public class RecommendationController {
                 "Gaming Headset"
         );
     }
+
+    // Test 500 error for Retry demonstration
+    @GetMapping("/test-error")
+    public String testError() {
+
+        log.error("========== Intentional 500 Error Triggered ==========");
+        throw new RuntimeException("Intentional test failure");
+    }
 }
