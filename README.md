@@ -1,11 +1,31 @@
-# CircuitBreaker:Cloud-Native E-Commerce Microservices
+# 🛡️ CircuitBreaker: Cloud-Native E-Commerce Microservices
 
-A **cloud-native e-commerce backend** developed using **Spring Boot Microservices**. The project demonstrates modern microservice architecture concepts including **service discovery, API Gateway routing, fault tolerance with Resilience4j Circuit Breaker, Redis caching, distributed tracing using Zipkin, health monitoring, and centralized application monitoring using Spring Boot Admin**.
+A **cloud-native e-commerce backend** developed using **Spring Boot Microservices**. The project demonstrates modern distributed-system concepts including **service discovery, API Gateway routing, fault tolerance with Resilience4j, Redis caching, distributed tracing with Zipkin, health monitoring, and centralized application monitoring with Spring Boot Admin**.
+
+The system is designed to prevent **cascading failures** by isolating unhealthy services and providing fallback responses.
 
 ---
 
-# Architecture
+# 📑 Table of Contents
 
+* [Architecture](#architecture)
+* [Tech Stack](#tech-stack)
+* [Project Structure](#project-structure)
+* [Services](#services)
+* [Key Features](#key-features)
+* [Resilience Patterns](#resilience-patterns)
+* [Redis Caching](#redis-caching)
+* [Monitoring & Tracing](#monitoring--tracing)
+* [APIs](#apis)
+* [How to Run](#how-to-run)
+* [Testing](#testing)
+* [Future Enhancements](#future-enhancements)
+
+---
+
+# 🏗️ Architecture
+
+```text
                            ┌─────────────────────┐
                            │       Client        │
                            │   Postman / Browser │
@@ -15,6 +35,12 @@ A **cloud-native e-commerce backend** developed using **Spring Boot Microservice
                            ┌─────────────────────┐
                            │     API Gateway     │
                            │       :8080         │
+                           │                     │
+                           │ Routing              │
+                           │ Circuit Breaker     │
+                           │ Rate Limiter        │
+                           │ Bulkhead            │
+                           │ Timeout / Retry      │
                            └──────────┬──────────┘
                                       │
                     ┌─────────────────┼─────────────────┐
@@ -26,13 +52,11 @@ A **cloud-native e-commerce backend** developed using **Spring Boot Microservice
              │   :8081    │    │   :8082    │   │     :8083      │
              └─────┬──────┘    └────────────┘   └────────────────┘
                    │
-                   │
           ┌────────┴─────────┐
-          │                  │
           ▼                  ▼
    ┌──────────────┐   ┌───────────────┐
-   │  Resilience4j│   │     Redis     │
-   │ CircuitBreaker│   │    Cache      │
+   │ Resilience4j │   │     Redis     │
+   │ Resilience   │   │     Cache     │
    └──────────────┘   └───────────────┘
 
 
@@ -42,13 +66,11 @@ A **cloud-native e-commerce backend** developed using **Spring Boot Microservice
              │          :8761           │
              └──────────────────────────┘
 
-
              ┌──────────────────────────┐
              │    Spring Boot Admin     │
-             │   Centralized Monitoring  │
+             │   Centralized Monitoring │
              │          :9090           │
              └──────────────────────────┘
-
 
              ┌──────────────────────────┐
              │          Zipkin          │
@@ -59,29 +81,28 @@ A **cloud-native e-commerce backend** developed using **Spring Boot Microservice
 
 ---
 
-# Tech Stack
+# 🧰 Tech Stack
 
-| Technology           | Version / Purpose                 |
-| -------------------- | --------------------------------- |
-| Java                 | 17                                |
-| Spring Boot          | 3.4.7                             |
-| Spring Cloud         | 2024.0.2                          |
-| Maven                | Build & Dependency Management     |
-| Eureka Server        | Service Discovery                 |
-| Spring Cloud Gateway | API Gateway                       |
-| Resilience4j         | Circuit Breaker & Fault Tolerance |
-| Redis                | Caching                           |
-| Spring Data Redis    | Redis Integration                 |
-| Spring Boot Actuator | Health & Metrics                  |
-| Spring Boot Admin    | Centralized Monitoring            |
-| Zipkin               | Distributed Tracing               |
-| REST APIs            | Inter-Service Communication       |
-| Microservices        | Application Architecture          |
-| Postman              | API Testing                       |
+| Technology                | Purpose                       |
+| ------------------------- | ----------------------------- |
+| **Java 17**               | Programming Language          |
+| **Spring Boot 3.4.7**     | Microservices Framework       |
+| **Spring Cloud 2024.0.2** | Cloud-Native Infrastructure   |
+| **Spring Cloud Gateway**  | API Gateway                   |
+| **Netflix Eureka**        | Service Discovery             |
+| **Resilience4j**          | Fault Tolerance               |
+| **Redis**                 | In-Memory Caching             |
+| **Spring Data Redis**     | Redis Integration             |
+| **Spring Boot Actuator**  | Health & Metrics              |
+| **Spring Boot Admin**     | Centralized Monitoring        |
+| **Micrometer Tracing**    | Distributed Tracing           |
+| **Zipkin**                | Trace Visualization           |
+| **Maven**                 | Build & Dependency Management |
+| **Postman**               | API Testing                   |
 
 ---
 
-#Project Structure
+# 📁 Project Structure
 
 ```text
 cloud-native-ecommerce/
@@ -112,147 +133,255 @@ cloud-native-ecommerce/
 
 ---
 
-# Features
+# 🔧 Services
 
-## Service Discovery using Eureka
-
-The project uses **Netflix Eureka Server** as a service registry.
-
-Each microservice registers itself with Eureka, allowing services to discover and communicate with each other dynamically.
-
-## API Gateway
-
-**Spring Cloud Gateway** acts as the single entry point for client requests.
-
-Features include:
-
-* API routing
-* Dynamic routing
-* Service discovery-based routing
-* Centralized entry point
-* Load-balanced communication
+| Service                    |   Port | Responsibility         |
+| -------------------------- | -----: | ---------------------- |
+| **Eureka Server**          | `8761` | Service Registry       |
+| **API Gateway**            | `8080` | Routing & Resilience   |
+| **Product Service**        | `8081` | Product Management     |
+| **Inventory Service**      | `8082` | Inventory Management   |
+| **Recommendation Service** | `8083` | Recommendations        |
+| **Admin Server**           | `9090` | Application Monitoring |
+| **Zipkin**                 | `9411` | Distributed Tracing    |
+| **Redis**                  | `6379` | In-Memory Cache        |
 
 ---
 
-## Circuit Breaker with Resilience4j
+# ✨ Key Features
 
-The Product Service uses **Resilience4j Circuit Breaker** to handle failures when communicating with dependent services.
+## 🔎 Service Discovery — Eureka
 
-If a dependent service becomes unavailable, the Circuit Breaker prevents repeated failed requests and executes a fallback method.
+Netflix Eureka acts as the central service registry.
+
+Each microservice registers with Eureka, allowing services to discover each other dynamically instead of relying on fixed service addresses.
 
 ```text
 Product Service
-      │
-      ▼
+       │
+       ▼
+Eureka Server
+       │
+       ▼
+Discover Inventory / Recommendation
+```
+
+---
+
+## 🌐 API Gateway
+
+Spring Cloud Gateway provides a **single entry point** for client requests.
+
+### Responsibilities
+
+* Dynamic request routing
+* Service discovery integration
+* Load-balanced communication
+* Circuit Breaker
+* Rate Limiting
+* Bulkhead
+* Timeout
+* Retry
+* Fallback
+
+```text
+Client
+  ↓
+API Gateway
+  ↓
+Required Microservice
+```
+
+---
+
+# 🛡️ Resilience4j Fault Tolerance
+
+The project uses Resilience4j to protect services from failures and prevent cascading failures.
+
+### Supported resilience patterns
+
+| Pattern             | Purpose                           |
+| ------------------- | --------------------------------- |
+| **Circuit Breaker** | Stops calls to unhealthy services |
+| **Retry**           | Handles temporary failures        |
+| **Timeout**         | Prevents indefinite waiting       |
+| **Rate Limiter**    | Controls excessive traffic        |
+| **Bulkhead**        | Limits concurrent requests        |
+| **Fallback**        | Provides an alternative response  |
+
+---
+
+# ⚡ Circuit Breaker
+
+The Circuit Breaker protects the application when a dependent service becomes unavailable.
+
+### Normal Flow
+
+```text
+Product Service
+      ↓
 Inventory Service
-      │
+      ↓
+Successful Response
+```
+
+### Failure Flow
+
+```text
+Product Service
+      ↓
+Inventory Service
       ✕
 Service Unavailable
-      │
-      ▼
-Resilience4j Circuit Breaker
-      │
-      ▼
+      ↓
+Circuit Breaker
+      ↓
 Fallback Response
 ```
 
----
-
-## Fallback APIs
-
-Fallback responses are returned when dependent services are unavailable.
-
-This improves:
-
-* Fault tolerance
-* System reliability
-* Service availability
-* Failure isolation
-
----
-
-# Redis Caching
-
-The project uses **Redis** as an in-memory caching layer.
-
-Caching frequently requested data reduces unnecessary calls to backend services and improves application response time.
+### Circuit Breaker States
 
 ```text
-Client
-  │
-  ▼
-Product Service
-  │
-  ▼
-Redis Cache
-  │
-  ├── Cache Hit ──────► Return Cached Data
-  │
-  └── Cache Miss
-          │
-          ▼
-      Backend Service
-          │
-          ▼
-      Store in Redis
-          │
-          ▼
-      Return Response
+🟢 CLOSED
+Normal requests
+     ↓
+Failures exceed threshold
+     ↓
+🔴 OPEN
+Requests blocked + Fallback
+     ↓
+Wait Duration
+     ↓
+🟡 HALF-OPEN
+Recovery test
+     ↓
+Success
+     ↓
+🟢 CLOSED
 ```
 
-### Benefits of Redis
-
-* Faster response time
-* Reduced database/service calls
-* Improved application performance
-* Efficient in-memory data access
-* Reduced load on backend services
-
-# Distributed Tracing with Zipkin
-
-The project uses **Zipkin** to trace requests across multiple microservices.
-
-A single request can travel through several services:
-
-```text
-Client
-  │
-  ▼
-API Gateway
-  │
-  ▼
-Product Service
-  │
-  ├──────────────► Inventory Service
-  │
-  └──────────────► Recommendation Service
-```
-
-Zipkin helps track:
-
-* Request flow
-* Trace IDs
-* Span IDs
-* Service-to-service communication
-* Request latency
-* Failed requests
-* Distributed transactions
-
-### Zipkin Dashboard
-
-```text
-http://localhost:9411
-```
-
-The Zipkin dashboard can be used to search and visualize traces generated by the microservices.
+This prevents repeated calls to a failing service and helps protect the application from cascading failures.
 
 ---
 
-# Health Monitoring
+# 🔄 Fallback
 
-**Spring Boot Actuator** provides health and monitoring endpoints.
+When a dependent service is unavailable, the application returns a fallback response instead of allowing the request to fail or hang indefinitely.
 
 Example:
+
+```json
+{
+  "status": "fallback",
+  "message": "Service temporarily unavailable"
+}
+```
+
+Fallback provides **graceful degradation** and keeps unaffected parts of the application available.
+
+---
+
+# 🚦 Rate Limiter
+
+The Rate Limiter controls the number of requests allowed through the Gateway.
+
+```text
+Request 1 → ✅
+Request 2 → ✅
+Request 3 → ✅
+Request 4 → ❌ 429 Too Many Requests
+```
+
+This helps protect backend services from excessive traffic and abuse.
+
+---
+
+# 🧱 Bulkhead
+
+Bulkhead isolation limits the number of concurrent requests handled by a protected service.
+
+```text
+Recommendation Route
+
+Concurrent Requests
+        ↓
+     Bulkhead
+        ↓
+ Limited Capacity
+```
+
+This prevents an overloaded service from consuming all available resources and affecting other services.
+
+---
+
+# ⏱️ Timeout & Retry
+
+### Timeout
+
+Prevents requests from waiting indefinitely for a slow service.
+
+```text
+Request
+  ↓
+Slow Service
+  ↓
+Timeout
+  ↓
+Fallback / Circuit Breaker
+```
+
+### Retry
+
+Handles temporary failures by attempting the request again according to the configured retry policy.
+
+```text
+Request
+  ↓
+Failure
+  ↓
+Retry
+  ↓
+Success
+```
+
+---
+
+# 🗄️ Redis Caching
+
+Redis is used as an in-memory caching layer to reduce repeated service calls and improve response time.
+
+```text
+Client
+  ↓
+Product Service
+  ↓
+Redis
+  │
+  ├── Cache Hit ──→ Return Data
+  │
+  └── Cache Miss
+          ↓
+      Backend Service
+          ↓
+      Store in Redis
+          ↓
+       Response
+```
+
+### Benefits
+
+* Faster responses
+* Reduced backend calls
+* Lower service load
+* Efficient in-memory access
+
+---
+
+# 📊 Monitoring & Tracing
+
+## Spring Boot Actuator
+
+Provides health and application metrics through endpoints such as:
 
 ```text
 /actuator/health
@@ -260,52 +389,57 @@ Example:
 /actuator/metrics
 ```
 
-These endpoints provide information about:
-
-* Application health
-* Runtime metrics
-* Application information
-* Service status
-
 ---
 
-#  Spring Boot Admin
+## Spring Boot Admin
 
-**Spring Boot Admin** provides a centralized dashboard for monitoring Spring Boot applications.
-
-Dashboard:
+Provides a centralized dashboard for monitoring registered Spring Boot applications.
 
 ```text
 http://localhost:9090
 ```
 
-It can be used to monitor:
+It provides visibility into:
 
-* Application health
-* Service status
+* Service health
+* Application status
 * Metrics
-* Environment
-* Actuator endpoints
 * JVM information
+* Actuator endpoints
 
 ---
 
-#  Services
+## 🔍 Zipkin Distributed Tracing
 
-| Service                |   Port | Description             |
-| ---------------------- | -----: | ----------------------- |
-| Eureka Server          | `8761` | Service Registry        |
-| API Gateway            | `8080` | API Routing             |
-| Product Service        | `8081` | Product Management      |
-| Inventory Service      | `8082` | Inventory Management    |
-| Recommendation Service | `8083` | Product Recommendations |
-| Admin Server           | `9090` | Centralized Monitoring  |
-| Zipkin                 | `9411` | Distributed Tracing     |
-| Redis                  | `6379` | In-Memory Cache         |
+Zipkin tracks requests as they move across multiple microservices.
+
+```text
+Client
+  ↓
+API Gateway
+  ↓
+Product Service
+  ├──→ Inventory Service
+  └──→ Recommendation Service
+```
+
+Zipkin helps identify:
+
+* Request flow
+* Trace and Span IDs
+* Service dependencies
+* Latency
+* Failed requests
+
+Dashboard:
+
+```text
+http://localhost:9411
+```
 
 ---
 
-# APIs
+# 🌐 APIs
 
 ## Product Service
 
@@ -331,15 +465,17 @@ GET /recommendations
 
 Returns product recommendations.
 
+> Requests can be routed through the API Gateway instead of directly accessing backend services.
+
 ---
 
-# How to Run
+# ▶️ How to Run
 
 ## Prerequisites
 
-Install the following:
+Install:
 
-* Java 17
+* Java 17+
 * Maven
 * Redis
 * IntelliJ IDEA / Eclipse / STS
@@ -360,26 +496,26 @@ mvn -version
 
 ---
 
-# Start Redis
+## 1. Start Redis
 
-Redis should be running before testing the caching functionality.
-
-Default Redis port:
-
-```text
-6379
-```
-
-If Redis is running locally, the application can connect to:
+Run Redis on:
 
 ```text
 localhost:6379
+```
 
-#  Start Eureka Server
+---
 
-Run the `service-registry` application first.
+## 2. Start Eureka Server
 
-Eureka Dashboard:
+Run:
+
+```bash
+cd service-registry
+mvn spring-boot:run
+```
+
+Dashboard:
 
 ```text
 http://localhost:8761
@@ -387,9 +523,9 @@ http://localhost:8761
 
 ---
 
-#  Start Microservices
+## 3. Start Microservices
 
-Start the services in the following order:
+Start in this order:
 
 ```text
 1. service-registry
@@ -400,41 +536,19 @@ Start the services in the following order:
 6. admin-server
 ```
 
----
-
-#  Start API Gateway
-
-The API Gateway runs on:
-
-```text
-http://localhost:8080
-```
-
-Client requests can be routed through the Gateway to the appropriate microservice.
+Each service should appear as registered in Eureka.
 
 ---
 
-#  Start Spring Boot Admin
+## 4. Start Zipkin
 
-The Admin Server runs on:
-
-```text
-http://localhost:9090
-```
-
-Open the dashboard to monitor the registered Spring Boot applications.
-
----
-
-# Start Zipkin
-
-Zipkin can be started using Docker:
+Using Docker:
 
 ```bash
 docker run -d -p 9411:9411 openzipkin/zipkin
 ```
 
-Open the Zipkin dashboard:
+Dashboard:
 
 ```text
 http://localhost:9411
@@ -442,23 +556,11 @@ http://localhost:9411
 
 ---
 
-# Circuit Breaker Testing
+# 🧪 Testing
 
-The Circuit Breaker can be tested by stopping the **Inventory Service** while the Product Service is running.
+## 1. Circuit Breaker Test
 
-### Normal Flow
-
-```text
-Client
-  ↓
-Product Service
-  ↓
-Inventory Service
-  ↓
-Successful Response
-```
-
-### Failure Flow
+### Normal
 
 ```text
 Client
@@ -466,119 +568,129 @@ Client
 Product Service
   ↓
 Inventory Service
-  ✕
-Service Unavailable
   ↓
-Resilience4j Circuit Breaker
-  ↓
-Fallback Response
+Success ✅
 ```
 
-After restarting the Inventory Service, the Circuit Breaker can transition through its recovery state and return to normal operation.
+Circuit:
+
+```text
+CLOSED 🟢
+```
+
+### Failure
+
+Stop the Inventory Service.
+
+```text
+Client
+  ↓
+Product Service
+  ↓
+Inventory Service ✕
+  ↓
+Circuit Breaker
+  ↓
+Fallback
+```
+
+The Circuit Breaker should eventually transition to:
+
+```text
+OPEN 🔴
+```
+
+### Recovery
+
+Restart Inventory Service.
+
+```text
+OPEN 🔴
+   ↓
+HALF-OPEN 🟡
+   ↓
+Successful Test
+   ↓
+CLOSED 🟢
+```
 
 ---
 
-# Redis Cache Testing
-
-Redis caching can be verified by requesting the same data multiple times.
+## 2. Redis Cache Test
 
 ### First Request
 
 ```text
-Client
+Request
   ↓
-Product Service
-  ↓
-Redis Cache
+Redis
   ↓
 Cache Miss
   ↓
-Backend Service
+Backend
   ↓
-Store Data in Redis
-  ↓
-Response
+Store Data
 ```
 
-### Subsequent Request
+### Second Request
 
 ```text
-Client
+Request
   ↓
-Product Service
-  ↓
-Redis Cache
+Redis
   ↓
 Cache Hit
   ↓
 Response
 ```
 
-The second request can be served directly from Redis, reducing unnecessary backend calls.
+---
+
+## 3. Rate Limiter Test
+
+Send multiple requests rapidly:
+
+```text
+Request 1 → ✅
+Request 2 → ✅
+Request 3 → ✅
+Request 4 → ❌ 429
+```
 
 ---
 
-# Distributed Tracing Testing
+## 4. Chaos / Latency Test
 
-After sending API requests through the system:
+Introduce artificial latency in the Recommendation Service.
 
 ```text
-API Gateway
-      ↓
-Product Service
-      ↓
-Inventory Service
-      ↓
 Recommendation Service
+        ↓
+Artificial Delay
+        ↓
+Timeout
+        ↓
+Circuit Breaker
+        ↓
+Fallback
 ```
 
-Open:
-
-```text
-http://localhost:9411
-```
-
-Search for the service traces and inspect the request flow, spans, and latency between services.
+This demonstrates how the system remains responsive when a downstream service becomes slow.
 
 ---
 
-# Monitoring
+# 📡 Monitoring Dashboards
 
-### Eureka Dashboard
-
-```text
-http://localhost:8761
-```
-
-Used to view registered microservices.
-
-### Spring Boot Admin
-
-```text
-http://localhost:9090
-```
-
-Used to monitor application health and metrics.
-
-### Zipkin
-
-```text
-http://localhost:9411
-```
-
-Used for distributed request tracing.
-
-### Redis
-
-```text
-localhost:6379
-```
-
-Used as the application's in-memory caching layer.
+| Component             | URL                     | Purpose             |
+| --------------------- | ----------------------- | ------------------- |
+| **Eureka**            | `http://localhost:8761` | Service Discovery   |
+| **Spring Boot Admin** | `http://localhost:9090` | Health & Monitoring |
+| **Zipkin**            | `http://localhost:9411` | Distributed Tracing |
+| **Redis**             | `localhost:6379`        | Cache               |
 
 ---
 
-# Key Concepts Demonstrated
+# 🎯 Key Concepts Demonstrated
 
 * Microservices Architecture
 * Service Discovery
@@ -586,46 +698,48 @@ Used as the application's in-memory caching layer.
 * API Gateway
 * Dynamic Routing
 * Inter-Service Communication
-* Circuit Breaker Pattern
+* Circuit Breaker
 * Resilience4j
-* Fallback Mechanism
+* Retry
+* Timeout
+* Rate Limiting
+* Bulkhead Isolation
+* Fallback
 * Redis Caching
-* Cache Hit / Cache Miss
 * Spring Boot Actuator
 * Spring Boot Admin
-* Health Monitoring
 * Distributed Tracing
 * Zipkin
 * Fault Tolerance
-* REST APIs
-* Service Monitoring
+* Chaos Testing
 
 ---
 
 # 🔮 Future Enhancements
 
-* Add centralized configuration using Spring Cloud Config
-* Add authentication using Spring Security and JWT
-* Add Docker Compose for all services
-* Add centralized logging
-* Add Prometheus and Grafana
-* Add database persistence
-* Add automated unit and integration testing
-* Add Kafka for event-driven communication
-* Add Kubernetes deployment
-* Deploy microservices to AWS
+* Docker Compose for complete application setup
+* Prometheus & Grafana monitoring
+* Centralized logging
+* Spring Cloud Config
+* JWT / OAuth2 authentication
+* Kafka event-driven communication
+* Automated unit and integration testing
+* Kubernetes deployment
+* AWS deployment
+* CI/CD using GitHub Actions
 * Replace `RestTemplate` with `WebClient`
 
 ---
 
-# Author
+# 👩‍💻 Author
 
 **Pradeepa N**
-CSE 
+CSE
 
 ---
 
-## Project Summary
+## ⭐ Project Goal
 
-> A cloud-native e-commerce backend demonstrating **Spring Boot Microservices, Eureka Service Discovery, API Gateway, Resilience4j Circuit Breaker, Redis Caching, Zipkin Distributed Tracing, Spring Boot Admin, fallback mechanisms, and centralized application monitoring**.
+> **One unhealthy microservice should not make the entire application unhealthy.**
 
+CircuitBreaker demonstrates how **API Gateway + Service Discovery + Resilience Patterns + Caching + Monitoring + Distributed Tracing** can be combined to build a reliable and fault-tolerant cloud-native application.
