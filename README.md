@@ -1,4 +1,4 @@
-# 🛡️ CircuitBreaker: Cloud-Native E-Commerce Microservices
+CircuitBreaker: Cloud-Native E-Commerce Microservices
 
 A **cloud-native e-commerce backend** developed using **Spring Boot Microservices**. The project demonstrates modern distributed-system concepts including **service discovery, API Gateway routing, fault tolerance with Resilience4j, Redis caching, distributed tracing with Zipkin, health monitoring, and centralized application monitoring with Spring Boot Admin**.
 
