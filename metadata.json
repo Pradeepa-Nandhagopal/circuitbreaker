@@ -1,0 +1,6 @@
+{
+  "name": "Resilience Control Center",
+  "description": "Cloud-native e-commerce microservices resilience dashboard demonstrating Circuit Breaker, Rate Limiting, Timeout, and Fallback behavior.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
