@@ -1,0 +1,519 @@
+
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@600;700;800&display=swap');
+
+/* ==============================
+   1. Global Styles
+================================ */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: #f5f7fb;
+  color: #202a3e;
+  font-family: 'DM Sans', sans-serif;
+}
+
+button,
+input {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+/* ==============================
+   2. Main Layout
+================================ */
+.layout {
+  min-height: 100vh;
+  display: flex;
+}
+
+/* ==============================
+   3. Sidebar
+================================ */
+.sidebar {
+  width: 230px;
+  background: #171d30;
+  color: #cbd2df;
+  padding: 25px 17px;
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: white;
+  font: 800 18px Manrope;
+  margin: 0 0 52px 5px;
+}
+
+.logo {
+  width: 36px;
+  height: 36px;
+  border-radius: 11px;
+  background: linear-gradient(135deg, #9279ff, #588ff2);
+  display: inline-grid;
+  place-items: center;
+  color: #fff;
+  font: bold 13px Manrope;
+}
+
+.side-label,
+.kicker {
+  font-size: 10px;
+  letter-spacing: 1.3px;
+  font-weight: 700;
+  color: #929caf;
+}
+
+.side-label {
+  padding-left: 9px;
+}
+
+.nav {
+  padding: 13px 11px;
+  border-radius: 8px;
+  font-size: 12px;
+  color: #b5bfd0;
+}
+
+.nav.active {
+  background: #303951;
+  color: white;
+}
+
+.side-bottom {
+  margin-top: auto;
+  border-top: 1px solid #30384b;
+  padding-top: 17px;
+  font-size: 11px;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.green-dot {
+  width: 7px;
+  height: 7px;
+  background: #39c58b;
+  border-radius: 50%;
+}
+
+.side-bottom button {
+  margin-left: auto;
+  background: none;
+  border: 0;
+  color: #cbd2df;
+  font-size: 10px;
+}
+
+/* ==============================
+   4. Main Content
+================================ */
+.main {
+  width: calc(100% - 230px);
+  max-width: 1500px;
+  margin: auto;
+  padding: 35px 40px;
+}
+
+.header,
+.panel-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.header {
+  margin-bottom: 25px;
+}
+
+.header .kicker,
+.panel-title .kicker {
+  margin: 0 0 5px;
+}
+
+.header h1 {
+  font: 800 27px Manrope;
+  margin: 0;
+}
+
+.secondary {
+  border: 1px solid #dfe4ed;
+  background: white;
+  border-radius: 8px;
+  padding: 10px 15px;
+  color: #3d4960;
+  font-size: 12px;
+}
+
+/* ==============================
+   5. Dashboard Statistics
+================================ */
+.stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-bottom: 19px;
+}
+
+.stats article,
+.panel {
+  background: white;
+  border: 1px solid #e8ecf3;
+  border-radius: 13px;
+  box-shadow: 0 3px 15px #26395b08;
+}
+
+.stats article {
+  padding: 18px 20px;
+}
+
+.tile {
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  display: grid;
+  place-items: center;
+}
+
+.purple {
+  background: #f0edff;
+  color: #7962e8;
+}
+
+.blue {
+  background: #e9f3ff;
+  color: #4c8de8;
+}
+
+.green {
+  background: #e7f8f1;
+  color: #2eae7e;
+}
+
+.stats p {
+  font-size: 12px;
+  color: #7d8799;
+  margin: 13px 0 3px;
+}
+
+.stats strong {
+  font: 800 27px Manrope;
+}
+
+.stats small,
+.stock small,
+td small {
+  display: block;
+  font-size: 10px;
+  color: #9aa3b2;
+  margin-top: 4px;
+}
+
+/* ==============================
+   6. Panels and Product Form
+================================ */
+.panel {
+  padding: 21px;
+  margin-bottom: 18px;
+}
+
+.panel h2 {
+  font: 700 16px Manrope;
+  margin: 0;
+}
+
+.product-form {
+  display: grid;
+  grid-template-columns: 1.3fr 1fr .8fr .7fr auto;
+  gap: 11px;
+  align-items: end;
+  margin-top: 18px;
+}
+
+.product-form label,
+.login-card label {
+  display: block;
+  font-size: 11px;
+  color: #68738a;
+  font-weight: 600;
+  margin-bottom: 7px;
+}
+
+.product-form input,
+.login-card input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #dfe5ee;
+  border-radius: 7px;
+  font-size: 12px;
+  outline: none;
+}
+
+.product-form input:focus,
+.login-card input:focus {
+  border-color: #8472ec;
+}
+
+.primary {
+  background: #6f63d9;
+  border: 0;
+  border-radius: 7px;
+  color: white;
+  padding: 11px 14px;
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.primary:disabled {
+  opacity: .5;
+}
+
+/* ==============================
+   7. Products and Inventory
+================================ */
+.columns {
+  display: grid;
+  grid-template-columns: minmax(0, 1.7fr) minmax(250px, .8fr);
+  gap: 17px;
+}
+
+.pill {
+  background: #f0efff;
+  color: #6e61d2;
+  border-radius: 20px;
+  padding: 6px 10px;
+  font-size: 10px;
+}
+
+.table-wrap {
+  overflow-x: auto;
+  margin-top: 15px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  white-space: nowrap;
+}
+
+th {
+  font-size: 10px;
+  color: #929bad;
+  padding: 10px 8px;
+  border-bottom: 1px solid #edf0f5;
+}
+
+td {
+  font-size: 11px;
+  color: #59647a;
+  padding: 13px 8px;
+  border-bottom: 1px solid #f0f2f6;
+}
+
+td b {
+  color: #202a3e;
+}
+
+.actions {
+  display: flex;
+  gap: 7px;
+}
+
+.actions button,
+.link {
+  border: 0;
+  background: none;
+  color: #665bd0;
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.actions .delete {
+  color: #d65c67;
+}
+
+.stock {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 13px 2px;
+  border-bottom: 1px solid #eff1f5;
+}
+
+.stock b {
+  font-size: 11px;
+}
+
+.stock strong {
+  font: 700 15px Manrope;
+}
+
+/* ==============================
+   8. Messages and Footer
+================================ */
+.empty,
+.muted {
+  font-size: 12px;
+  color: #929bad;
+  line-height: 1.5;
+}
+
+.tiny {
+  font-size: 10px;
+}
+
+.alert {
+  padding: 11px 14px;
+  border-radius: 8px;
+  font-size: 12px;
+}
+
+.error {
+  background: #fff0f0;
+  color: #b84450;
+}
+
+.success {
+  background: #eaf8f1;
+  color: #27845f;
+}
+
+footer {
+  text-align: center;
+  color: #a0a8b6;
+  font-size: 10px;
+  padding: 15px;
+}
+
+/* ==============================
+   9. Login Page
+================================ */
+.login {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  background: radial-gradient(
+          circle at 15% 15%,
+          #eceaff,
+          transparent 35%
+  ), #f5f7fb;
+}
+
+.login-card {
+  width: min(410px, 100%);
+  background: white;
+  border: 1px solid #e8ebf3;
+  border-radius: 17px;
+  padding: 34px;
+  box-shadow: 0 18px 60px #2d376012;
+}
+
+.login-card .logo {
+  margin-bottom: 20px;
+}
+
+.login-card .kicker {
+  color: #796bdc;
+}
+
+.login-card h1 {
+  font: 800 27px Manrope;
+  margin: 4px 0;
+}
+
+.login-card input {
+  margin-bottom: 16px;
+}
+
+.wide {
+  width: 100%;
+  padding: 13px;
+}
+
+.login-card .muted {
+  margin: 10px 0 20px;
+}
+
+/* ==============================
+   10. Responsive Design
+================================ */
+@media (max-width: 1050px) {
+  .main {
+    padding: 25px 20px;
+  }
+
+  .product-form {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .columns {
+    grid-template-columns: 1fr;
+  }
+
+  .product-form button {
+    grid-column: span 2;
+  }
+}
+
+@media (max-width: 650px) {
+  .sidebar {
+    width: 60px;
+    padding: 18px 8px;
+  }
+
+  .brand {
+    margin-left: 3px;
+  }
+
+  .brand:not(.logo) {
+    font-size: 0;
+  }
+
+  .side-label,
+  .nav {
+    font-size: 0;
+    text-align: center;
+    padding: 13px 0;
+  }
+
+  .side-bottom {
+    font-size: 0;
+  }
+
+  .side-bottom button {
+    font-size: 0;
+  }
+
+  .main {
+    width: calc(100% - 60px);
+    padding: 20px 12px;
+  }
+
+  .header h1 {
+    font-size: 21px;
+  }
+
+  .stats {
+    grid-template-columns: 1fr;
+  }
+
+  .product-form {
+    grid-template-columns: 1fr;
+  }
+
+  .product-form button {
+    grid-column: auto;
+  }
+}

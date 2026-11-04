@@ -6,3 +6,5 @@ target/
 
 service-registry.zip
 IntelliJ IDEA 2026.2/
+.vercel
+.env*
